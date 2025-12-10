@@ -1,0 +1,28 @@
+if libros && libros.length > 0
+    h2.mb-4.text-primary Libros Encontrados: #{libros.length}
+
+    .row.row-cols-1.row-cols-md-2.row-cols-lg-3.g-4
+        each libro in libros
+            .col
+                .card.h-100.shadow-sm
+                    if libro.imagen
+                        img(src=libro.imagen, alt="Portada de " + libro.titulo, class="card-img-top img-fluid", style="height: 250px; object-fit: contain;")
+                    else
+                        .card-img-top.d-flex.align-items-center.justify-content-center(style="height: 250px; background-color: #f8f9fa;")
+                            p.text-muted No hay imagen
+
+                    .card-body.d-flex.flex-column
+                        h5.card-title.fw-bold= libro.titulo
+                        p.card-text
+                            small.text-muted Autor(es):
+                            | #{libro.autores}
+
+                        hr
+                        p.card-text
+                            small.text-info ISBN-13: #{libro.isbn_13}
+
+else if searchTerm
+    .alert.alert-warning.mt-5(role="alert") No se encontraron resultados para la búsqueda: **#{searchTerm}**. Intenta con otro término.
+
+else if error
+    .alert.alert-danger.mt-5(role="alert") Error: #{error}

@@ -1,0 +1,9 @@
+extends ./layout/index
+
+block contenido
+    .container.mt-5
+        // Título dinámico (Buscador de librería o Resultados para...)
+        h1.text-center.mb-4= pagina
+
+
+        include resultados.pug

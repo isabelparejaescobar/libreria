@@ -4,16 +4,27 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev" : "nodemon index.js"
+    "dev": "nodemon index.js"
   },
   "type": "module",
   "author": "",
   "license": "ISC",
   "keywords": [],
   "dependencies": {
-    "express": "^5.1.0"
+    "axios": "^1.13.2",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "pug": "^3.0.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isabelparejaescobar/libreria.git"
+  },
+  "bugs": {
+    "url": "https://github.com/isabelparejaescobar/libreria/issues"
+  },
+  "homepage": "https://github.com/isabelparejaescobar/libreria#readme"
 }
