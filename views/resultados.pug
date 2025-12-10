@@ -3,21 +3,47 @@ if libros && libros.length > 0
 
     .row.row-cols-1.row-cols-md-2.row-cols-lg-3.g-4
         each libro in libros
+            // --- DEFINIMOS EL ID AQUÍ PARA ASEGURARNOS ---
+            // Esto coge libro.id, y si no existe, coge libro._id
+            - var idLibro = libro.id || libro._id
+
             .col
                 .card.h-100.shadow-sm
+                    // --- Imagen ---
                     if libro.imagen
                         img(src=libro.imagen, alt="Portada de " + libro.titulo, class="card-img-top img-fluid", style="height: 250px; object-fit: contain;")
                     else
                         .card-img-top.d-flex.align-items-center.justify-content-center(style="height: 250px; background-color: #f8f9fa;")
                             p.text-muted No hay imagen
 
+                    // --- Cuerpo de la tarjeta ---
                     .card-body.d-flex.flex-column
                         h5.card-title.fw-bold= libro.titulo
+
+                        // --- SOLUCIÓN DEFINITIVA DEL BOTÓN ---
+                        if idLibro
+                            a.btn.btn-outline-primary.w-100.mt-2.mb-3(href='/libro/' + idLibro) Ver Ficha Técnica
+                        else
+                            button.btn.btn-danger.w-100.mt-2.mb-3(disabled) Error: Sin ID
+
                         p.card-text
                             small.text-muted Autor(es):
                             | #{libro.autores}
 
-                        hr
+                        // --- Sección de Precio ---
+                        p.card-text.mt-3
+                            if libro.precio !== 'No disponible / Gratis'
+                                strong.text-success.fs-5 #{libro.precio}
+                            else
+                                span.badge.bg-secondary No disponible
+
+                        // --- Botón de Compra ---
+                        if libro.linkCompra && libro.estadoVenta === 'FOR_SALE'
+                            a.btn.btn-primary.btn-sm.w-100.mb-2(href=libro.linkCompra, target="_blank")
+                                | Comprar eBook
+
+                        // --- Footer ISBN ---
+                        hr.mt-auto
                         p.card-text
                             small.text-info ISBN-13: #{libro.isbn_13}
 

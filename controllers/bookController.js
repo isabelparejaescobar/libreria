@@ -40,20 +40,19 @@ export async function searchBooks(searchTerm) {
 
         if (data.items && data.items.length > 0) {
 
-            // =========================================================
-            // === CORRECCIÓN CLAVE: DECLARACIÓN Y ASIGNACIÓN DE 'books' ===
-            // =========================================================
             const books = data.items.map(item => ({
                 id: item.id,
                 titulo: item.volumeInfo.title,
                 autores: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Desconocido',
                 fechaPublicacion: item.volumeInfo.publishedDate,
-                descripcion: item.volumeInfo.description,
-                // Agregamos la URL de la miniatura para mostrar en la vista
                 imagen: item.volumeInfo.imageLinks ? item.volumeInfo.imageLinks.thumbnail : null,
                 isbn_13: item.volumeInfo.industryIdentifiers
                     ? item.volumeInfo.industryIdentifiers.find(id => id.type === 'ISBN_13')?.identifier
                     : 'N/A',
+                precio: item.saleInfo && item.saleInfo.listPrice
+                    ? `${item.saleInfo.listPrice.amount} ${item.saleInfo.listPrice.currencyCode}`
+                    : 'No disponible / Gratis',
+                linkCompra: item.saleInfo ? item.saleInfo.buyLink : null,
                 // Puedes añadir más campos si los necesitas
             }));
 
@@ -70,5 +69,53 @@ export async function searchBooks(searchTerm) {
 
         // Relanzamos el error para que sea manejado por el router y se muestre en la vista
         throw new Error('Fallo en la conexión con el servicio de Google Books. (Revisar clave/cuota)');
+    }
+}
+
+// ... (Tu código anterior de imports y searchBooks) ...
+
+/**
+ * Obtiene los detalles de un libro específico por su ID
+ * @param {string} id - El ID del volumen de Google Books
+ */
+export async function getBookDetails(id) {
+    const url = `${API_URL}/${id}`;
+    const params = { key: API_KEY };
+
+    try {
+        const response = await axios.get(url, { params });
+        const item = response.data;
+        const info = item.volumeInfo;
+        const sale = item.saleInfo;
+
+        // Mapeamos un objeto con TODOS los detalles para la ficha técnica
+        const bookDetail = {
+            id: item.id,
+            titulo: info.title,
+            subtitulo: info.subtitle || '',
+            autores: info.authors ? info.authors.join(', ') : 'Desconocido',
+            descripcion: info.description || 'Sin descripción disponible.', // Google suele mandar HTML aquí
+            fechaPublicacion: info.publishedDate,
+            editorial: info.publisher || 'Desconocido',
+            paginas: info.pageCount || 'N/A',
+            categorias: info.categories ? info.categories.join(', ') : 'General',
+            idioma: info.language,
+            imagen: info.imageLinks ? (info.imageLinks.large || info.imageLinks.thumbnail) : null,
+            // Precios
+            precio: sale && sale.listPrice
+                ? `${sale.listPrice.amount} ${sale.listPrice.currencyCode}`
+                : 'No disponible / Gratis',
+            linkCompra: sale ? sale.buyLink : null,
+            estadoVenta: sale ? sale.saleability : 'UNKNOWN',
+            isbn: info.industryIdentifiers
+                ? info.industryIdentifiers.map(i => `${i.type}: ${i.identifier}`).join(', ')
+                : 'N/A'
+        };
+
+        return bookDetail;
+
+    } catch (error) {
+        console.error("Error obteniendo detalles del libro:", error.message);
+        throw new Error('No se pudo cargar la ficha del libro.');
     }
 }

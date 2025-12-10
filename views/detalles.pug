@@ -1,0 +1,68 @@
+extends ./layout/index
+
+block contenido
+    .container.mt-5
+        // Botón volver
+        a.btn.btn-link.mb-4(href="/") &laquo; Volver al buscador
+
+        if libro
+            .row
+                // COLUMNA IZQUIERDA: IMAGEN
+                .col-md-4.text-center
+                    if libro.imagen
+                        img.img-fluid.shadow.rounded(src=libro.imagen, alt=libro.titulo, style="max-height: 500px;")
+                    else
+                        .bg-light.d-flex.align-items-center.justify-content-center(style="height: 400px; width: 100%;")
+                            p.text-muted Sin Imagen
+
+                // COLUMNA DERECHA: INFORMACIÓN PRINCIPAL
+                .col-md-8
+                    h1.fw-bold= libro.titulo
+                    if libro.subtitulo
+                        h3.h5.text-muted= libro.subtitulo
+
+                    p.mt-3.fs-5
+                        strong Autor:
+                        | #{libro.autores}
+
+                    // Precio y Compra
+                    .card.bg-light.mt-4.mb-4.border-0
+                        .card-body
+                            h4.text-primary.fw-bold Precio: #{libro.precio}
+
+                            if libro.linkCompra
+                                a.btn.btn-success.btn-lg.mt-2(href=libro.linkCompra target="_blank") Comprar en Google Play
+                            else
+                                button.btn.btn-secondary.mt-2(disabled) No disponible para venta
+
+                    // Descripción (Usamos !{} para renderizar HTML si Google lo envía, CUIDADO: solo usar con fuentes confiables)
+                    h4 Descripción
+                    p.text-justify !{libro.descripcion}
+
+            // SECCIÓN INFERIOR: FICHA TÉCNICA
+            .row.mt-5
+                .col-12
+                    h3.mb-4 Ficha Técnica del Producto
+                    table.table.table-striped.table-bordered
+                        tbody
+                            tr
+                                th(scope="row" style="width: 30%") ISBN / Identificadores
+                                td= libro.isbn
+                            tr
+                                th(scope="row") Editorial
+                                td= libro.editorial
+                            tr
+                                th(scope="row") Fecha de Publicación
+                                td= libro.fechaPublicacion
+                            tr
+                                th(scope="row") Número de Páginas
+                                td= libro.paginas
+                            tr
+                                th(scope="row") Idioma
+                                td= libro.idioma
+                            tr
+                                th(scope="row") Categorías
+                                td= libro.categorias
+
+        else
+            .alert.alert-danger No se encontró la información del libro.

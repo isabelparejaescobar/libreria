@@ -1,19 +1,17 @@
-// routes/index.js
-
 import express from "express";
-import { searchBooks } from '../controllers/bookController.js'; // Importación necesaria
+import axios from "axios";
+import { searchBooks } from '../controllers/bookController.js';
 
 const router = express.Router();
 
 // =========================================================================
-// 1. RUTAS DE LA APLICACIÓN (Tu código original)
+// 1. RUTAS DE LA APLICACIÓN
 // =========================================================================
 
-// Página principal (Usamos 'inicio' como tu vista por defecto)
+// Página principal (Buscador)
 router.get('/', (req , res) => {
-    // Esta ruta se convierte en el Buscador
     res.render('inicio', {
-        pagina: 'Buscador de la Librería', // Título para el Buscador
+        pagina: 'Buscador de la Librería',
         libros: [],
         searchTerm: ''
     });
@@ -36,26 +34,19 @@ router.get('/contacto', (req , res) => {
 });
 
 // =========================================================================
-// 2. RUTA DE BÚSQUEDA (Corregida a GET)
+// 2. RUTA DE BÚSQUEDA
 // =========================================================================
 
-// Nota: La ruta duplicada router.get('/', ...) y la ruta POST /buscar
-// han sido eliminadas y reemplazadas por esta única ruta GET /buscar
-// para que coincida con tu formulario HTML.
-
 router.get('/buscar', async (req, res) => {
-    // CAPTURA CORREGIDA: Usamos req.query.q porque el formulario es GET y el campo es name="q"
     const searchTerm = req.query.q;
 
     try {
         if (!searchTerm) {
-            // Si no hay término, redirige al inicio para evitar errores
             return res.redirect('/');
         }
 
         const libros = await searchBooks(searchTerm);
 
-        // Renderiza en tu vista principal 'inicio', no en 'index'
         res.render('inicio', {
             pagina: `Resultados para "${searchTerm}"`,
             libros: libros,
@@ -63,14 +54,56 @@ router.get('/buscar', async (req, res) => {
         });
     } catch (error) {
         console.error("Error al buscar libros en la API:", error.message);
-
-        // Renderiza en tu vista principal 'inicio'
         res.render('inicio', {
             pagina: 'Error de Búsqueda',
             error: error.message,
             libros: [],
             searchTerm: searchTerm
         });
+    }
+});
+
+// =========================================================================
+// 3. RUTA DE FICHA TÉCNICA (Aquí estaba el fallo)
+// =========================================================================
+
+router.get('/libro/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // Hacemos la petición DIRECTAMENTE aquí usando Axios
+        // (Reemplazamos la función getBookDetails que no existía)
+        const respuesta = await axios.get(`https://www.googleapis.com/books/v1/volumes/${id}`);
+        const datosGoogle = respuesta.data;
+
+        // Limpiamos los datos para que tu PUG los entienda
+        const libro = {
+            titulo: datosGoogle.volumeInfo.title,
+            subtitulo: datosGoogle.volumeInfo.subtitle,
+            autores: datosGoogle.volumeInfo.authors ? datosGoogle.volumeInfo.authors.join(', ') : 'Desconocido',
+            descripcion: datosGoogle.volumeInfo.description || 'Sin descripción disponible.',
+            imagen: datosGoogle.volumeInfo.imageLinks ? (datosGoogle.volumeInfo.imageLinks.large || datosGoogle.volumeInfo.imageLinks.thumbnail) : null,
+            editorial: datosGoogle.volumeInfo.publisher,
+            fechaPublicacion: datosGoogle.volumeInfo.publishedDate,
+            paginas: datosGoogle.volumeInfo.pageCount,
+            categorias: datosGoogle.volumeInfo.categories ? datosGoogle.volumeInfo.categories.join(', ') : 'General',
+            isbn: datosGoogle.volumeInfo.industryIdentifiers ? datosGoogle.volumeInfo.industryIdentifiers[0].identifier : 'No disponible',
+            idioma: datosGoogle.volumeInfo.language,
+            precio: datosGoogle.saleInfo.listPrice ? `${datosGoogle.saleInfo.listPrice.amount} ${datosGoogle.saleInfo.listPrice.currencyCode}` : 'No disponible / Gratis',
+            linkCompra: datosGoogle.saleInfo.buyLink,
+            _id: datosGoogle.id
+        };
+
+        // Renderizamos la vista 'detalle' (Asegúrate de que tu archivo pug se llame detalle.pug)
+        res.render('detalles', {
+            pagina: libro.titulo,
+            libro: libro
+        });
+
+    } catch (error) {
+        console.error("Error al obtener detalles:", error.message);
+        // Si el ID no es válido o Google falla, redirigimos al inicio
+        res.redirect('/');
     }
 });
 
