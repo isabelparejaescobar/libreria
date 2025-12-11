@@ -1,6 +1,7 @@
 import express from "express";
 import axios from "axios";
 import { searchBooks } from '../controllers/bookController.js';
+import {guardarResenias, paginaInicio, paginaResenias} from "../controllers/paginaController.js";
 
 const router = express.Router();
 
@@ -9,21 +10,15 @@ const router = express.Router();
 // =========================================================================
 
 // Página principal (Buscador)
-router.get('/', (req , res) => {
-    res.render('inicio', {
-        pagina: 'Buscador de la Librería',
-        libros: [],
-        searchTerm: ''
-    });
-});
+router.get('/', paginaInicio);
 
 router.get('/login', (req , res) => {
     res.send('Login');
 });
 
-router.get('/resenias', (req , res) => {
-    res.render('resenias');
-});
+router.post('/resenias', guardarResenias);
+
+router.get('/resenias', paginaResenias);
 
 router.get('/ofertas', (req , res) => {
     res.render('ofertas');
@@ -63,9 +58,7 @@ router.get('/buscar', async (req, res) => {
     }
 });
 
-// =========================================================================
-// 3. RUTA DE FICHA TÉCNICA (Aquí estaba el fallo)
-// =========================================================================
+
 
 router.get('/libro/:id', async (req, res) => {
     const { id } = req.params;

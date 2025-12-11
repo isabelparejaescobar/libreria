@@ -1,12 +1,22 @@
 //importamos express
 import express from 'express';
 import router from './route/index.js';
+import db from './config/db.js';
+import './models/Resenias.js';
 
 
 import dotenv from 'dotenv';
 dotenv.config(); // Carga las variables del archivo .env
 //creamos la instancia
 const app = express();
+
+app.use(express.urlencoded({ extended: true }));
+
+//conectamos a la bbdd
+db.authenticate()
+    .then(() => db.sync()) //   LÍNEA CREA LA TABLA AUTOMÁTICAMENTE
+    .then(() => console.log('Conectado a la BBDD y tablas creadas'))
+    .catch((err) => console.log('Error de conexión:', err));
 
 //definimos el puerto
 const port = process.env.PORT || 4000;

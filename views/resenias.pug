@@ -1,4 +1,27 @@
-extends ./layout/index
-
+extends layout/index
 block contenido
+    main.container.mt-5
+        h1.text-center-mt-5.text-center #{pagina}
+        .row
+            .col-md-12
+                h2.d-block.w-100.text-center Agrega un Comentario
+                blockquote.text-center Lee sobre nuestros clientes y sus experiencias
+
+
+            .row.justify-content-center.col
+                .col-md-8
+                    form(action="/resenias" method="POST")
+                        .form-group
+                            label(for="nombre") Nombre
+                            input#nombre(type="text", placeholder="Tu Nombre", name="nombre", class="form-control", value=nombre)
+                        .form-group
+                            label(for="correoelectronico") Correo Electrónico
+                            input#correoelectronico(type="email", placeholder="Correo Electrónico", name="correoelectronico", class="form-control", value=correoelectronico)
+                        .form-group
+                            label(for="mensaje") Mensaje
+                            textarea#mensaje(placeholder="Mensaje", name="mensaje", class="form-control", rows="5")= mensaje
+
+                        input.btn.btn-success.btn-block(type="submit", value="Enviar Testimonio")
+
+
 
