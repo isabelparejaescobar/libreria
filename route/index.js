@@ -2,7 +2,7 @@ import express from "express";
 import axios from "axios";
 import { searchBooks } from '../controllers/bookController.js';
 import {guardarResenias, paginaInicio, paginaResenias} from "../controllers/paginaController.js";
-
+import { enviarCorreo } from '../controllers/contactoController.js';
 const router = express.Router();
 
 // =========================================================================
@@ -24,9 +24,13 @@ router.get('/ofertas', (req , res) => {
     res.render('ofertas');
 });
 
-router.get('/contacto', (req , res) => {
-    res.render('contacto');
+router.get('/contacto', (req, res) => {
+    res.render('contacto', {
+        pagina: 'Contacto'
+    });
 });
+
+router.post('/contacto', enviarCorreo);
 
 // =========================================================================
 // 2. RUTA DE BÚSQUEDA

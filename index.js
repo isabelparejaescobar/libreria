@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //conectamos a la bbdd
 db.authenticate()
-    .then(() => db.sync()) //   LÍNEA CREA LA TABLA AUTOMÁTICAMENTE
+    .then(() => db.sync())
     .then(() => console.log('Conectado a la BBDD y tablas creadas'))
     .catch((err) => console.log('Error de conexión:', err));
 

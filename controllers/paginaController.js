@@ -12,7 +12,6 @@ const paginaInicio= async (req, res) => {
         const resultado= await Promise.all(promiseDB) ;
 
         res.render("inicio", {
-            pagina: 'Inicio',
             clase: 'home',
             testimonios: resultado[1],
         });
@@ -30,7 +29,7 @@ const paginaResenias= async (req, res) => {
             order: [["Id","DESC"]],
         });
         res.render("resenias", {
-            pagina: 'Resenias',
+            pagina: 'Reseñas',
             resenias: resenias,
         });
     } catch (error) {
