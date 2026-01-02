@@ -2,9 +2,12 @@ header.header
     .navbar
         .container
             .row.align-items-center.gx-3
+                // 1. LOGO (Sin cambios)
                 .col-6.col-md-3
                     a.logo(href="/")
                         img(src="/img/logo.png", alt="Sitio Logo", class="img-fluid")
+
+                // 2. MENÚ (Sin cambios)
                 .col-6.col-md-4
                     nav.menu.d-flex.justify-content-md-end.gap-3
                         a.nav-link.text-white(href="/resenias") Reseñas
@@ -16,9 +19,26 @@ header.header
                             span
                             span
 
+                // 3. BUSCADOR + LÓGICA DE USUARIO
+                // He añadido un contenedor flex para que el buscador y los botones vivan juntos
                 .col-12.col-md-5.mt-2.mt-md-0
-                    form(action="/buscar", method="GET")
-                        .input-group
-                            input.form-control(type="text", name="q", placeholder="Buscar libros, reseñas...")
-                            button.btn.btn-light(type="submit")
-                                i.bi.bi-search
+                    .d-flex.align-items-center.gap-2
+                        // El buscador (flex-grow-1 hace que ocupe el espacio disponible)
+                        form.flex-grow-1(action="/buscar", method="GET")
+                            .input-group
+                                input.form-control(type="text", name="q", placeholder="Buscar...")
+                                button.btn.btn-light(type="submit")
+                                    i.bi.bi-search
+
+                        // --- AQUÍ ESTÁ LA LÓGICA QUE PEDISTE ---
+                        if usuarioLogueado
+                            // CASO A: Usuario Conectado -> Muestra nombre y botón Salir
+                            .d-flex.align-items-center.gap-2.ms-2
+                                // El nombre solo se ve en PC para no saturar el móvil
+                                span.text-white.fw-bold.small.d-none.d-lg-block Hola, #{usuarioLogueado.nombre}
+                                a.btn.btn-danger.btn-sm(href="/auth/logout") Salir
+                        else
+                            // CASO B: Invitado -> Muestra Login y Registro
+                            .d-flex.align-items-center.gap-2.ms-2
+                                a.btn.btn-outline-light.btn-sm(href="/auth/login") Login
+                                a.btn.btn-warning.btn-sm.fw-bold(href="/auth/registro") Crear

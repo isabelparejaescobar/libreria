@@ -1,27 +1,53 @@
-extends layout/index
+extends ./layout/index
+
 block contenido
     main.container.mt-5
-        h1.text-center-mt-5.text-center #{pagina}
-        .row
-            .col-md-12
-                h2.d-block.w-100.text-center Agrega un Comentario
-                blockquote.text-center Lee sobre nuestros clientes y sus experiencias
-
-
-            .row.justify-content-center.col
-                .col-md-8
-                    form(action="/resenias" method="POST")
-                        .form-group
-                            label(for="nombre") Nombre
-                            input#nombre(type="text", placeholder="Tu Nombre", name="nombre", class="form-control", value=nombre)
-                        .form-group
-                            label(for="correoelectronico") Correo Electrónico
-                            input#correoelectronico(type="email", placeholder="Correo Electrónico", name="correoelectronico", class="form-control", value=correoelectronico)
-                        .form-group
-                            label(for="mensaje") Mensaje
-                            textarea#mensaje(placeholder="Mensaje", name="mensaje", class="form-control", rows="5")= mensaje
-
-                        input.btn.btn-success.btn-block(type="submit", value="Enviar")
 
 
 
+        h3.text-center.mb-5.text-secondary Lee sobre nuestros clientes y sus experiencias
+
+        .row.mb-5
+            if resenias.length > 0
+                each resenia in resenias
+                    .col-md-6.col-lg-4.mb-4
+                        .card.shadow-sm.h-100
+                            .card-body
+                                // El mensaje entre comillas para que parezca una cita
+                                p.card-text.font-italic "#{resenia.mensaje}"
+                                footer.blockquote-footer.mt-3
+                                    | #{resenia.nombre}
+            else
+                .col-12
+                    p.text-center.alert.alert-secondary No hay reseñas todavía. ¡Sé el primero en opinar!
+
+
+        // --- SECCIÓN 2: FORMULARIO ---
+        .row.justify-content-center
+            .col-md-8
+                .card.shadow
+                    // Cabecera verde para que quede bonito
+                    .card-header.bg-success.text-white
+                        h3.text-center.mb-0.h5 Agrega tu Comentario
+
+                    .card-body
+                        // BLOQUE DE ERRORES (Solo sale si hay fallos)
+                        if errores
+                            each error in errores
+                                .alert.alert-danger.text-center= error
+
+                        // EL FORMULARIO
+                        form(action="/resenias" method="POST")
+                            .form-group
+                                label(for="nombre").font-weight-bold Nombre
+                                input#nombre.form-control(type="text", placeholder="Tu Nombre", name="nombre", value=nombre)
+
+                            .form-group
+                                label(for="correoelectronico").font-weight-bold Correo Electrónico
+                                input#correoelectronico.form-control(type="email", placeholder="tu@correo.com", name="correoelectronico", value=correoelectronico)
+
+                            .form-group
+                                label(for="mensaje").font-weight-bold Mensaje
+                                textarea#mensaje.form-control(name="mensaje", rows="4", placeholder="Cuéntanos qué te pareció...")= mensaje
+
+                            input.btn.btn-success.btn-block.mt-4(type="submit", value="Enviar Reseña")

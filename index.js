@@ -3,7 +3,8 @@ import express from 'express';
 import router from './route/index.js';
 import db from './config/db.js';
 import './models/Resenias.js';
-
+import cookieParser from 'cookie-parser';
+import identificarUsuario from './middleware/identificarUsuario.js';
 
 import dotenv from 'dotenv';
 dotenv.config(); // Carga las variables del archivo .env
@@ -11,6 +12,9 @@ dotenv.config(); // Carga las variables del archivo .env
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser()); //habilitamos la lectura de cookies
+app.use(identificarUsuario);
+app.use(express.json());
 
 //conectamos a la bbdd
 db.authenticate()

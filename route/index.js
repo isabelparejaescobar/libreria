@@ -4,6 +4,12 @@ import { searchBooks } from '../controllers/bookController.js';
 import {guardarResenias, paginaInicio, paginaResenias} from "../controllers/paginaController.js";
 import { enviarCorreo } from '../controllers/contactoController.js';
 const router = express.Router();
+import { formularioLogin, formularioRegistro, registrar, autenticar, cerrarSesion } from '../controllers/usuarioController.js';
+import { obtenerRespuestaChat } from '../controllers/chatController.js';
+
+// ...
+router.get('/auth/logout', cerrarSesion);
+
 
 // =========================================================================
 // 1. RUTAS DE LA APLICACIÓN
@@ -15,6 +21,15 @@ router.get('/', paginaInicio);
 router.get('/login', (req , res) => {
     res.send('Login');
 });
+
+router.get('/auth/login', formularioLogin);
+router.post('/auth/login', autenticar);
+
+router.get('/auth/registro', formularioRegistro);
+router.post('/auth/registro', registrar);
+router.get('/auth/logout', cerrarSesion);
+
+router.post('/api/chat', obtenerRespuestaChat);
 
 router.post('/resenias', guardarResenias);
 

@@ -7,7 +7,6 @@ block contenido
 
         if libro
             .row
-                // COLUMNA IZQUIERDA: IMAGEN
                 .col-md-4.text-center
                     if libro.imagen
                         img.img-fluid.shadow.rounded(src=libro.imagen, alt=libro.titulo, style="max-height: 500px;")
@@ -15,7 +14,6 @@ block contenido
                         .bg-light.d-flex.align-items-center.justify-content-center(style="height: 400px; width: 100%;")
                             p.text-muted Sin Imagen
 
-                // COLUMNA DERECHA: INFORMACIÓN PRINCIPAL
                 .col-md-8
                     h1.fw-bold= libro.titulo
                     if libro.subtitulo
@@ -25,7 +23,6 @@ block contenido
                         strong Autor:
                         | #{libro.autores}
 
-                    // Precio y Compra
                     .card.bg-light.mt-4.mb-4.border-0
                         .card-body
                             h4.text-primary.fw-bold Precio: #{libro.precio}
@@ -39,7 +36,6 @@ block contenido
                     h4 Descripción
                     p.text-justify !{libro.descripcion}
 
-            // SECCIÓN INFERIOR: FICHA TÉCNICA
             .row.mt-5
                 .col-12
                     h3.mb-4 Ficha Técnica del Producto

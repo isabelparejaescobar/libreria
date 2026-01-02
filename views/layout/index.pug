@@ -5,8 +5,134 @@ html(lang="es")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         title #{nombreP} | #{pagina}
         link(rel="stylesheet", href="/css/bootstrap.css")
+        //- Si usas iconos de bootstrap en el header, asegúrate de tener el link aquí (opcional)
+        link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css")
         link(rel="stylesheet", href="/css/style.css")
     body
         include header
+
         block contenido
+
         include footer
+
+        //- ==========================================
+        //- CÓDIGO DEL CHATBOT FLOTANTE
+        //- ==========================================
+        #chat-container(style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;")
+            //- 1. Botón Redondo para abrir el chat
+            button#chat-toggle.btn.btn-primary.rounded-circle.shadow(style="width: 60px; height: 60px; font-size: 24px; border:none;") 💬
+
+            //- 2. La Ventana del chat (Oculta al principio)
+            #chat-window.card.shadow-lg(style="display: none; position: absolute; bottom: 70px; right: 0; width: 320px; height: 450px; border-radius: 15px; overflow: hidden;")
+                //- Cabecera azul
+                .card-header.bg-primary.text-white.d-flex.justify-content-between.align-items-center.p-3
+                    div
+                        span.font-weight-bold Asistente Literario 🤖
+                    button#chat-close.btn.btn-sm.text-white(style="font-size: 20px; line-height: 1;") &times;
+
+                //- Zona de mensajes (Scrollable)
+                #chat-messages.card-body(style="overflow-y: auto; height: 330px; background: #f8f9fa; padding: 15px; font-size: 0.9rem;")
+                    //- Mensaje de bienvenida inicial
+                    .mb-3.text-left
+                        div(style="background: #e9ecef; color: #333; display: inline-block; padding: 10px 15px; border-radius: 15px 15px 15px 0; max-width: 85%;")
+                            | ¡Hola! 👋 Soy tu asistente.
+                            br
+                            | Escribe "recomiéndame algo de terror" o "libros de cocina" para empezar.
+
+                //- Pie con input y botón
+                .card-footer.bg-white.p-2.border-top
+                    .input-group
+                        input#chat-input.form-control(type="text" placeholder="Escribe aquí..." style="border-radius: 20px 0 0 20px; border-right: none;")
+                        .input-group-append
+                            button#chat-send.btn.btn-primary(style="border-radius: 0 20px 20px 0;") ➤
+
+        //- ==========================================
+        //- SCRIPT LÓGICA DEL CHAT
+        //- ==========================================
+        script.
+            document.addEventListener('DOMContentLoaded', () => {
+                const toggleBtn = document.getElementById('chat-toggle');
+                const chatWindow = document.getElementById('chat-window');
+                const closeBtn = document.getElementById('chat-close');
+                const sendBtn = document.getElementById('chat-send');
+                const input = document.getElementById('chat-input');
+                const messages = document.getElementById('chat-messages');
+
+                // 1. ABRIR Y CERRAR CHAT
+                toggleBtn.onclick = () => {
+                    // Si está oculto lo mostramos, si no lo ocultamos
+                    if (chatWindow.style.display === 'none') {
+                        chatWindow.style.display = 'block';
+                        input.focus();
+                    } else {
+                        chatWindow.style.display = 'none';
+                    }
+                };
+
+                closeBtn.onclick = () => chatWindow.style.display = 'none';
+
+                // 2. FUNCIÓN PARA PINTAR MENSAJES EN PANTALLA
+                const addMessage = (html, sender) => {
+                    const divWrapper = document.createElement('div');
+                    divWrapper.className = sender === 'user' ? 'text-right mb-3' : 'text-left mb-3';
+
+                    const bubble = document.createElement('div');
+                    // Estilos dinámicos según quién hable
+                    if (sender === 'user') {
+                        bubble.style.cssText = 'background: #0d6efd; color: white; display: inline-block; padding: 10px 15px; border-radius: 15px 15px 0 15px; max-width: 85%; text-align: left;';
+                    } else {
+                        bubble.style.cssText = 'background: #e9ecef; color: #333; display: inline-block; padding: 10px 15px; border-radius: 15px 15px 15px 0; max-width: 85%;';
+                    }
+
+                    bubble.innerHTML = html;
+                    divWrapper.appendChild(bubble);
+                    messages.appendChild(divWrapper);
+
+                    // Auto-scroll hacia abajo
+                    messages.scrollTop = messages.scrollHeight;
+                }
+
+                // 3. ENVIAR MENSAJE AL SERVIDOR (NodeJS)
+                const sendMessage = async () => {
+                    const text = input.value.trim();
+                    if(!text) return;
+
+                    // A) Mostrar mensaje del usuario
+                    addMessage(text, 'user');
+                    input.value = '';
+
+                    // Efecto de "Escribiendo..."
+                    const loadingId = 'loading-' + Date.now();
+                    const loadingDiv = document.createElement('div');
+                    loadingDiv.id = loadingId;
+                    loadingDiv.className = 'text-left mb-3';
+                    loadingDiv.innerHTML = '<div style="background: #e9ecef; color: #666; display: inline-block; padding: 5px 10px; border-radius: 15px 15px 15px 0; font-size: 12px;">Escribiendo...</div>';
+                    messages.appendChild(loadingDiv);
+                    messages.scrollTop = messages.scrollHeight;
+
+                    try {
+                        // B) Llamada a tu API
+                        const res = await fetch('/api/chat', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({ mensaje: text })
+                        });
+                        const data = await res.json();
+
+                        // C) Quitar "Escribiendo..." y mostrar respuesta
+                        document.getElementById(loadingId).remove();
+                        addMessage(data.reply, 'bot');
+
+                    } catch (error) {
+                        document.getElementById(loadingId).remove();
+                        addMessage('Ups, tuve un error de conexión. Inténtalo luego.', 'bot');
+                        console.error(error);
+                    }
+                }
+
+                // Eventos de click y Enter
+                sendBtn.onclick = sendMessage;
+                input.addEventListener("keypress", function(event) {
+                    if (event.key === "Enter") sendMessage();
+                });
+            });

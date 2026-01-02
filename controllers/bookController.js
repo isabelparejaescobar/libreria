@@ -94,7 +94,7 @@ export async function getBookDetails(id) {
             titulo: info.title,
             subtitulo: info.subtitle || '',
             autores: info.authors ? info.authors.join(', ') : 'Desconocido',
-            descripcion: info.description || 'Sin descripción disponible.', // Google suele mandar HTML aquí
+            descripcion: info.description || 'Sin descripción disponible.',
             fechaPublicacion: info.publishedDate,
             editorial: info.publisher || 'Desconocido',
             paginas: info.pageCount || 'N/A',

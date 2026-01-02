@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 const enviarCorreo = async (req, res) => {
     const { nombre, apellidos, email, telefono, mensaje } = req.body;
 
-    // Validación
+    // Validacion
     if (!nombre || !apellidos || !email || !telefono || !mensaje) {
         res.redirect('/contacto');
         return;

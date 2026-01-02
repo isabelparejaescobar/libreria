@@ -1,0 +1,27 @@
+extends ../layout/index
+
+block contenido
+    .row.justify-content-center.mt-5
+        .col-md-6
+            h2.text-center.mb-4 #{pagina}
+
+            if mensaje
+                .alert.alert-success.text-center= mensaje
+            if errores
+                each error in errores
+                    .alert.alert-danger.text-center= error.msg
+
+            .card.shadow
+                .card-body
+                    form(action="/auth/login" method="POST")
+                        .form-group
+                            label(for="email") Email
+                            input#email.form-control(type="email" placeholder="Tu Email" name="email")
+                        .form-group
+                            label(for="password") Contraseña
+                            input#password.form-control(type="password" placeholder="Tu Password" name="password")
+
+                        input.btn.btn-primary.btn-block(type="submit" value="Iniciar Sesión")
+
+                    .text-center.mt-3
+                        a(href="/auth/registro") ¿No tienes cuenta? Regístrate
