@@ -1,7 +1,7 @@
 import express from "express";
 import axios from "axios";
 import { searchBooks } from '../controllers/bookController.js';
-import {guardarResenias, paginaInicio, paginaResenias} from "../controllers/paginaController.js";
+import {guardarResenias, paginaInicio, paginaResenias, paginaOfertas} from "../controllers/paginaController.js";
 import { enviarCorreo } from '../controllers/contactoController.js';
 const router = express.Router();
 import { formularioLogin, formularioRegistro, registrar, autenticar, cerrarSesion } from '../controllers/usuarioController.js';
@@ -21,6 +21,8 @@ router.get('/', paginaInicio);
 router.get('/login', (req , res) => {
     res.send('Login');
 });
+
+router.get('/ofertas', paginaOfertas);
 
 router.get('/auth/login', formularioLogin);
 router.post('/auth/login', autenticar);

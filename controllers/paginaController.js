@@ -2,8 +2,7 @@ import{Resenias} from "../models/Resenias.js";
 
 const paginaInicio = async (req, res) => {
 
-    // 1. Definimos una categoría para buscar (ej: 'subject:fiction' o 'best sellers')
-    // Pedimos 20 resultados para tener variedad donde elegir
+    // 1. Definimos una categoría para buscar
     const url = `https://www.googleapis.com/books/v1/volumes?q=subject:fiction&langRestrict=es&maxResults=20&key=${process.env.GOOGLE_BOOKS_API_KEY}`;
 
     try {
@@ -12,20 +11,19 @@ const paginaInicio = async (req, res) => {
         const data = await respuesta.json();
         const todosLosLibros = data.items || [];
 
-        // 3. LA MAGIA: Desordenamos el array aleatoriamente
-        // El sort con Math.random() mezcla los elementos como una baraja de cartas
+        // 3. Mezclamos
         const librosMezclados = todosLosLibros.sort(() => 0.5 - Math.random());
 
-        // 4. Cogemos solo los 3 primeros de la lista mezclada
+        // 4. Cogemos los 3 primeros
         const librosRecomendados = librosMezclados.slice(0, 3);
 
         res.render('inicio', {
+            pagina: 'Inicio',
             libros: librosRecomendados
         });
 
     } catch (error) {
         console.log(error);
-        // Si falla la API, cargamos la página sin libros para que no explote
         res.render('inicio', {
             pagina: 'Inicio',
             libros: []
@@ -96,7 +94,29 @@ const guardarResenias = async (req, res) => {
     }
 }
 
+const paginaOfertas = async (req, res) => {
+    // CAMBIO CLAVE: filter=free-ebooks
+    let url = `https://www.googleapis.com/books/v1/volumes?q=Clasicos&filter=free-ebooks&langRestrict=es&maxResults=20&country=ES&key=${process.env.GOOGLE_BOOKS_API_KEY}`;
+    try {
+        const respuesta = await fetch(url);
+        const data = await respuesta.json();
+        const libros = data.items || [];
+
+        res.render('ofertas', {
+            pagina: 'Super Ofertas',
+            libros: libros
+        });
+    } catch (error) {
+        console.log(error);
+        res.render('ofertas', {
+            pagina: 'Super Ofertas',
+            libros: []
+        });
+    }
+}
+
 export {paginaInicio,
     paginaResenias,
     guardarResenias,
+    paginaOfertas
 };

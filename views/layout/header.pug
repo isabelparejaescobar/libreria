@@ -30,15 +30,12 @@ header.header
                                 button.btn.btn-light(type="submit")
                                     i.bi.bi-search
 
-                        // --- AQUÍ ESTÁ LA LÓGICA QUE PEDISTE ---
                         if usuarioLogueado
-                            // CASO A: Usuario Conectado -> Muestra nombre y botón Salir
                             .d-flex.align-items-center.gap-2.ms-2
                                 // El nombre solo se ve en PC para no saturar el móvil
                                 span.text-white.fw-bold.small.d-none.d-lg-block Hola, #{usuarioLogueado.nombre}
                                 a.btn.btn-danger.btn-sm(href="/auth/logout") Salir
                         else
-                            // CASO B: Invitado -> Muestra Login y Registro
                             .d-flex.align-items-center.gap-2.ms-2
                                 a.btn.btn-outline-light.btn-sm(href="/auth/login") Login
                                 a.btn.btn-warning.btn-sm.fw-bold(href="/auth/registro") Crear

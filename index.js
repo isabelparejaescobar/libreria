@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+
+
+
 //importamos express
 import express from 'express';
 import router from './route/index.js';
@@ -6,7 +10,6 @@ import './models/Resenias.js';
 import cookieParser from 'cookie-parser';
 import identificarUsuario from './middleware/identificarUsuario.js';
 
-import dotenv from 'dotenv';
 dotenv.config(); // Carga las variables del archivo .env
 //creamos la instancia
 const app = express();
