@@ -72,7 +72,6 @@ export async function searchBooks(searchTerm) {
     }
 }
 
-// ... (Tu código anterior de imports y searchBooks) ...
 
 /**
  * Obtiene los detalles de un libro específico por su ID
@@ -80,7 +79,12 @@ export async function searchBooks(searchTerm) {
  */
 export async function getBookDetails(id) {
     const url = `${API_URL}/${id}`;
-    const params = { key: API_KEY };
+
+    // 1. IMPORTANTE: Añadimos 'country: ES' para que Google nos dé los precios reales de España
+    const params = {
+        key: API_KEY,
+        country: 'ES'
+    };
 
     try {
         const response = await axios.get(url, { params });
@@ -88,7 +92,23 @@ export async function getBookDetails(id) {
         const info = item.volumeInfo;
         const sale = item.saleInfo;
 
-        // Mapeamos un objeto con TODOS los detalles para la ficha técnica
+        // --- LÓGICA DE PRECIO CORREGIDA ---
+        let precioFinal = 'No disponible / Gratis';
+
+        if (sale && sale.saleability === 'FOR_SALE') {
+            // AQUÍ ESTÁ EL CAMBIO:
+            // Prioridad 1: retailPrice (El precio real al que te lo venden, la oferta)
+            if (sale.retailPrice) {
+                precioFinal = `${sale.retailPrice.amount} ${sale.retailPrice.currencyCode}`;
+            }
+            // Prioridad 2: listPrice (Solo si no hay precio de oferta, usamos el de lista)
+            else if (sale.listPrice) {
+                precioFinal = `${sale.listPrice.amount} ${sale.listPrice.currencyCode}`;
+            }
+        } else if (sale && sale.saleability === 'FREE') {
+            precioFinal = '0.00 EUR';
+        }
+
         const bookDetail = {
             id: item.id,
             titulo: info.title,
@@ -101,10 +121,13 @@ export async function getBookDetails(id) {
             categorias: info.categories ? info.categories.join(', ') : 'General',
             idioma: info.language,
             imagen: info.imageLinks ? (info.imageLinks.large || info.imageLinks.thumbnail) : null,
-            // Precios
-            precio: sale && sale.listPrice
-                ? `${sale.listPrice.amount} ${sale.listPrice.currencyCode}`
-                : 'No disponible / Gratis',
+
+            // Asignamos el precio calculado arriba
+            precio: precioFinal,
+
+            // Opcional: Pasamos el precio original también por si quieres tacharlo en la vista
+            precioOriginal: sale && sale.listPrice ? `${sale.listPrice.amount} ${sale.listPrice.currencyCode}` : null,
+
             linkCompra: sale ? sale.buyLink : null,
             estadoVenta: sale ? sale.saleability : 'UNKNOWN',
             isbn: info.industryIdentifiers

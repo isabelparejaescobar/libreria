@@ -2,7 +2,7 @@ extends ./layout/index
 
 block contenido
     //- ============================================
-    //- 1. EL CARRUSEL
+    //- 1. EL CARRUSEL (INTACTO)
     //- ============================================
     if pagina === 'Inicio'
         #carouselInicio.carousel.slide(data-ride="carousel" data-interval="3000")
@@ -34,15 +34,14 @@ block contenido
                 span.carousel-control-next-icon
 
     //- ============================================
-    //- 2. RESULTADOS (GRILLA PERFECTA)
+    //- 2. RESULTADOS (SOLUCIÓN DEFINITIVA IMÁGENES)
     //- ============================================
-    .container.my-5
+    .container-fluid.my-5.px-5
         h2.text-center.mb-5.font-weight-bold(style="font-family: 'Playfair Display', serif;") #{pagina === 'Inicio' ? 'Recomendaciones' : pagina}
 
         if libros && libros.length > 0
-            //- GRID: Usamos row-cols-lg-3 (3 columnas) o 2 si prefieres muy grandes.
-            //- g-4 da espacio uniforme entre tarjetas.
-            .row.row-cols-1.row-cols-md-2.row-cols-lg-3.g-4
+            //- Centrado y con wrap
+            .row.d-flex.flex-wrap.justify-content-center.g-4
                 each libroItem in libros
                     //- --- DATOS ---
                     - var info = libroItem.volumeInfo || libroItem
@@ -68,32 +67,41 @@ block contenido
                         - precio = libroItem.precio
 
                     //- --- LÓGICA DE IMAGEN ---
-                    //- 1. Definimos una imagen por defecto (Placeholder gris bonito)
-                    - var imagen = 'https://via.placeholder.com/300x450/e9ecef/868e96?text=Sin+Portada'
-                    //- 2. Si Google tiene imagen, la usamos
+                    - var imagen = null // Empezamos sin imagen
                     if info.imageLinks && info.imageLinks.thumbnail
                         - imagen = info.imageLinks.thumbnail
-                    //- 3. Si viene de tu BBDD, la usamos
                     else if libroItem.imagen
                         - imagen = libroItem.imagen
 
+                    //- TRUCO 1: Forzamos HTTPS reemplazando http: por https: en la cadena de texto
+                    if imagen && imagen.startsWith('http:')
+                        - imagen = imagen.replace('http:', 'https:')
+
                     //- --- TARJETA ---
-                    .col
+                    .col-12.col-md-4.col-5-custom
                         .card.h-100.shadow-sm.border-0
-                            //- CONTENEDOR DE IMAGEN UNIFORME
-                            //- bg-light crea un fondo gris suave si el libro es estrecho
-                            //- height fijo de 400px (500px era excesivo) para alinear todas
-                            .div.bg-light.d-flex.align-items-center.justify-content-center(style="height: 400px; overflow: hidden; border-radius: 5px 5px 0 0;")
-                                img(src=imagen alt=titulo style="height: 100%; width: 100%; object-fit: contain;" referrerpolicy="no-referrer")
+                            //- El div tiene bg-light, así que si la imagen desaparece, se ve gris bonito
+                            .div.bg-light.d-flex.align-items-center.justify-content-center.text-muted(style="height: 300px; overflow: hidden; border-radius: 5px 5px 0 0; position: relative;")
+
+                                //- Si no hay imagen desde el principio, mostramos texto
+                                if !imagen
+                                    span.small Sin Portada
+                                else
+                                    //- TRUCO 2: Si falla (onerror), ocultamos la imagen (display='none').
+                                    //- Al ocultarse, se verá el fondo gris del div padre. Adios icono roto.
+                                    img(
+                                        src=imagen
+                                        alt=titulo
+                                        style="height: 100%; width: 100%; object-fit: contain;"
+                                        referrerpolicy="no-referrer"
+                                        onerror="this.style.display='none'; this.parentNode.innerHTML='<span class=\"small\">Sin imagen</span>';"
+                                    )
 
                             .card-body.d-flex.flex-column
-                                //- TÍTULO (Máximo 2 líneas)
                                 h5.card-title.fw-bold.text-center.mt-2(style="font-size: 1.1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.8em;" title=titulo)= titulo
 
-                                //- AUTOR (1 línea)
                                 p.text-muted.text-center.small.mb-3(style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") #{autores}
 
-                                //- PRECIO Y BOTÓN (Siempre abajo)
                                 .mt-auto.pt-3.border-top
                                     .d-flex.justify-content-between.align-items-center.mb-3
                                         span.h4.mb-0.font-weight-bold.text-dark #{precio}
@@ -106,3 +114,12 @@ block contenido
                                         button.btn.btn-secondary.btn-block(disabled) Error
         else
             .alert.alert-warning.text-center.mt-5 No se encontraron libros.
+
+    //- CSS
+    style.
+        @media (min-width: 992px) {
+            .col-5-custom {
+                flex: 0 0 20%;
+                max-width: 20%;
+            }
+        }

@@ -13,6 +13,7 @@ const obtenerRespuestaChat = async (req, res) => {
                     content: `Eres un bibliotecario experto, culto y MUY PRECISO con los géneros literarios.
                     
                     TU OBJETIVO: Recomendar libros que sean REALMENTE parecidos en trama, tono y género a lo que pide el usuario.
+                    NO RESPONDAS COSAS QUE NO TENGAN NADA QUE VER CON LIBROS O RECOMENDACIONES, NO TIENES CAPACIDAD DE HACER NADA MAS QUE RECOMENDAR LIBROS
                     
                     REGLAS ESTRICTAS DE RECOMENDACIÓN:
                     1. Si piden Fantasía Juvenil (ej: El Príncipe Cruel), NO recomiendes erótica ni libros de adultos (como 50 sombras). Busca libros de hadas, magia o cortes reales (ej: Una Corte de Rosas y Espinas, Los Juegos del Hambre).
@@ -35,7 +36,7 @@ const obtenerRespuestaChat = async (req, res) => {
                 { role: "user", content: mensaje }
             ],
             model: "llama-3.3-70b-versatile",
-            temperature: 0.2, // <--- BAJAMOS ESTO: 0.2 es "muy preciso/lógico", 0.7 es "creativo/loco"
+            temperature: 0.2,
             response_format: { type: "json_object" }
         });
 

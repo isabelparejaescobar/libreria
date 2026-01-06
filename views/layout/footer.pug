@@ -1,12 +1,19 @@
-footer.container.py-5
-    .row
-        .col-md-6
-            nav.nav.footer.justify-content-center.justify-content-md-start
-                a.nav-link(href="/resenias") Reseñas
-                //a.nav-link(href="/viajes") Viajes
-                //a.nav-link(href="/testimonios") Testimonios
+footer.footer.mt-auto
+    .container
+        .row.align-items-center
+            // Columna Izquierda: Logo o Nombre
+            .col-md-4.text-center.text-md-start.mb-3.mb-md-0
+                h5.text-white.mb-0 Librería
+                small.text-white-50 La mejor literatura a tu alcance.
 
-        .col
-            p.copyright.text-center.text-md-right
-                | Todos los derechos reservados
-                span=year
+            // Columna Central: Navegación
+            .col-md-4.text-center.mb-3.mb-md-0
+                nav.nav.justify-content-center
+                    a.nav-link.footer-link(href="/resenias") Reseñas
+                    a.nav-link.footer-link(href="/ofertas") Ofertas
+                    a.nav-link.footer-link(href="/contacto") Contacto
+
+            // Columna Derecha: Copyright
+            .col-md-4.text-center.text-md-end
+                p.copyright.mb-0.text-white-50
+                    | &copy; #{new Date().getFullYear()} Todos los derechos reservados.

@@ -1,41 +1,40 @@
 header.header
     .navbar
-        .container
-            .row.align-items-center.gx-3
-                // 1. LOGO (Sin cambios)
-                .col-6.col-md-3
+        .container-fluid.px-5
+            .row.w-100.align-items-center
+                // 1. LOGO (Izquierda)
+                .col-md-2.d-flex.align-items-center
                     a.logo(href="/")
-                        img(src="/img/logo.png", alt="Sitio Logo", class="img-fluid")
+                        img(src="/img/logo.png", alt="Logo", style="max-height: 50px;")
 
-                // 2. MENÚ (Sin cambios)
-                .col-6.col-md-4
-                    nav.menu.d-flex.justify-content-md-end.gap-3
-                        a.nav-link.text-white(href="/resenias") Reseñas
-                        a.nav-link.text-white(href="/ofertas") Ofertas
-                        a.nav-link.text-white(href="/contacto") Contacto
+                // 2. MENÚ (Centro) - Ahora tiene su propia clase para separar
+                .col-md-5.d-none.d-md-flex.justify-content-center
+                    nav.navigation-menu
+                        a.nav-link(href="/resenias") Reseñas
+                        a.nav-link(href="/ofertas") Ofertas
+                        a.nav-link(href="/contacto") Contacto
 
-                        button.menu-toggle(type="button").d-md-none.ms-2
-                            span
-                            span
-                            span
-
-                // 3. BUSCADOR + LÓGICA DE USUARIO
-                // He añadido un contenedor flex para que el buscador y los botones vivan juntos
-                .col-12.col-md-5.mt-2.mt-md-0
-                    .d-flex.align-items-center.gap-2
-                        // El buscador (flex-grow-1 hace que ocupe el espacio disponible)
-                        form.flex-grow-1(action="/buscar", method="GET")
+                // 3. BUSCADOR Y BOTONES (Derecha)
+                .col-md-5.col-12
+                    .actions-panel
+                        // Bloque del Buscador
+                        form.search-form(action="/buscar", method="GET")
                             .input-group
-                                input.form-control(type="text", name="q", placeholder="Buscar...")
-                                button.btn.btn-light(type="submit")
+                                input.form-control.search-input(type="text", name="q", placeholder="Buscar libro...")
+                                button.btn.btn-search(type="submit")
                                     i.bi.bi-search
 
-                        if usuarioLogueado
-                            .d-flex.align-items-center.gap-2.ms-2
-                                // El nombre solo se ve en PC para no saturar el móvil
-                                span.text-white.fw-bold.small.d-none.d-lg-block Hola, #{usuarioLogueado.nombre}
-                                a.btn.btn-danger.btn-sm(href="/auth/logout") Salir
-                        else
-                            .d-flex.align-items-center.gap-2.ms-2
-                                a.btn.btn-outline-light.btn-sm(href="/auth/login") Login
-                                a.btn.btn-warning.btn-sm.fw-bold(href="/auth/registro") Crear
+                        // Bloque de Autenticación (Separado del buscador)
+                        .auth-block
+                            if usuarioLogueado
+                                span.user-name Hola, #{usuarioLogueado.nombre}
+                                a.btn.btn-salir(href="/auth/logout") Salir
+                            else
+                                a.btn.btn-login(href="/auth/login") Iniciar Sesión
+                                a.btn.btn-crear(href="/auth/registro") Crear Cuenta
+
+                        // Botón móvil
+                        button.menu-toggle.d-md-none(type="button")
+                            span
+                            span
+                            span

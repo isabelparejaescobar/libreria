@@ -1,60 +1,105 @@
 extends ./layout/index
 
 block contenido
-    .container.my-5
-        h1.text-center.mb-5.font-weight-bold(style="font-family: 'Playfair Display', serif;") Ofertas Irresistibles
+    .container-fluid.my-5.px-5
+        h1.text-center.mb-5.font-weight-bold(style="font-family: 'Playfair Display', serif;") Oportunidades Literarias
 
-        //- Banner de Marketing
-        .alert.alert-danger.text-center.mb-5.shadow-sm.border-0(style="background-color: #ffe5e5; color: #cc0000;")
-            h4.alert-heading.fw-bold 🔥 ¡LIQUIDACIÓN TOTAL!
-            p Selección especial de títulos con el <strong>100% de descuento</strong>. Solo por tiempo limitado.
+        //- Banner
+        .alert.alert-danger.text-center.mb-5.shadow-sm.border-0(style="background-color: #ffe5e5; color: #cc0000; max-width: 800px; margin: 0 auto 3rem auto;")
+            h4.alert-heading.fw-bold 🔥 ¡PRECIOS REBAJADOS!
+            p Aprovecha estos descuentos exclusivos. ¡Ahorra hasta un <strong>30%</strong> en títulos seleccionados!
 
         if libros && libros.length > 0
-            .row.row-cols-1.row-cols-md-2.row-cols-lg-3.g-4
+            //- Usamos d-flex y flex-wrap para permitir anchos personalizados
+            .row.d-flex.flex-wrap
                 each libroItem in libros
                     //- --- DATOS ---
                     - var info = libroItem.volumeInfo || libroItem
+                    - var sale = libroItem.saleInfo || {}
+
                     - var titulo = info.title || libroItem.titulo || 'Sin título'
                     - var id = libroItem.id || libroItem._id
 
-                    //- AUTORES
-                    - var autores = 'Autor clásico'
+                    //- AUTOR
+                    - var autores = 'Autor desconocido'
                     if info.authors
                         - autores = Array.isArray(info.authors) ? info.authors.join(', ') : info.authors
 
                     //- IMAGEN
-                    - var imagen = 'https://via.placeholder.com/300x450/e9ecef/868e96?text=Oferta'
+                    - var imagen = 'https://via.placeholder.com/300x450/e9ecef/868e96?text=Sin+Imagen'
                     if info.imageLinks && info.imageLinks.thumbnail
                         - imagen = info.imageLinks.thumbnail
                     else if libroItem.imagen
                         - imagen = libroItem.imagen
 
-                    //- --- TARJETA ---
-                    .col.mb-4
-                        .card.h-100.shadow-sm.border-0
-                            //- Imagen con etiqueta de descuento
-                            .div.bg-light.d-flex.align-items-center.justify-content-center(style="height: 400px; overflow: hidden; border-radius: 5px 5px 0 0; position: relative;")
+                    - var disponible = (sale.saleability === 'FOR_SALE' && sale.retailPrice)
 
-                                //- ETIQUETA ROJA DE DESCUENTO
-                                span.badge.badge-danger.shadow(style="position: absolute; top: 15px; right: 15px; font-size: 1rem; z-index: 10; padding: 0.5em 1em; transform: rotate(0deg);") -100% GRATIS
+                    - var precioReal = ''
+                    - var precioTachado = ''
+
+                    if disponible
+                        // El precio REAL viene de Google
+                        - var precioNum = sale.retailPrice.amount
+                        - precioReal = precioNum.toFixed(2) + ' €'
+
+                        // El precio TACHADO sí lo calculamos (falso marketing +30%)
+                        - precioTachado = (precioNum * 1.30).toFixed(2) + ' €'
+
+
+                    //- --- COLUMNA PERSONALIZADA PARA 5 ITEMS ---
+                    //- En PC (lg) forzamos ancho 20% para que quepan 5
+                    //- En móvil (col-12) ocupa todo
+                    //- En tablet (col-md-4) ocupan 1/3
+                    .col-12.col-md-4.mb-4(style="flex: 0 0 20%; max-width: 20%;" class="col-lg-custom-5")
+                        .card.h-100.shadow-sm.border-0
+                            //- CABECERA IMAGEN
+                            .div.bg-light.d-flex.align-items-center.justify-content-center(style="height: 280px; overflow: hidden; border-radius: 5px 5px 0 0; position: relative;")
+
+                                //- ETIQUETAS
+                                if disponible
+                                    span.badge.badge-danger.shadow(style="position: absolute; top: 10px; right: 10px; font-size: 0.75rem; z-index: 10;") -30%
+                                else
+                                    span.badge.badge-secondary.shadow(style="position: absolute; top: 10px; right: 10px; font-size: 0.75rem; z-index: 10;") AGOTADO
 
                                 img(src=imagen alt=titulo style="height: 100%; width: 100%; object-fit: contain;" referrerpolicy="no-referrer")
 
-                            .card-body.d-flex.flex-column
-                                h5.card-title.fw-bold.text-center.mt-2(style="font-size: 1.1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.8em;" title=titulo)= titulo
-                                p.text-muted.text-center.small.mb-3(style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;") #{autores}
+                            //- CUERPO
+                            .card-body.d-flex.flex-column.p-3
+                                h5.card-title.fw-bold.text-center.mt-1(style="font-size: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.5em; line-height: 1.25;" title=titulo)= titulo
+                                p.text-muted.text-center.small.mb-2(style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.85rem;") #{autores}
 
-                                //- SECCIÓN PRECIO (SIMULACIÓN DE OFERTA)
-                                .mt-auto.pt-3.border-top
-                                    .d-flex.justify-content-center.align-items-center.flex-column.mb-3
-                                        //- Precio ficticio tachado para efecto psicológico
-                                        span.text-muted.small(style="text-decoration: line-through;") PVP: 9.99 €
-                                        //- Precio real (Gratis)
-                                        span.h3.font-weight-bold.text-success.mb-0 0.00 €
+                                .mt-auto.pt-2.border-top
+                                    .d-flex.justify-content-center.align-items-center.flex-column.mb-2
+                                        if disponible
+                                            //- MUESTRA EL PRECIO REAL DE GOOGLE
+                                            span.text-muted.small(style="text-decoration: line-through; font-size: 0.8rem;") PVP: #{precioTachado}
+                                            span.h5.font-weight-bold.text-danger.mb-0 #{precioReal}
+                                        else
+                                            //- SI GOOGLE NO DA PRECIO, NO SE INVENTA
+                                            span.text-muted.small &nbsp;
+                                            span.h6.font-weight-bold.text-muted.mb-0 No disponible
 
-                                    if id
-                                        a.btn.btn-outline-danger.btn-block.rounded-pill(href='/libro/' + id) Conseguir Ahora
+                                    //- BOTONES
+                                    if id && disponible
+                                        a.btn.btn-outline-danger.btn-sm.btn-block.rounded-pill(href='/libro/' + id) Ver Oferta
+                                    else if id
+                                        a.btn.btn-light.btn-sm.btn-block.text-muted(href='/libro/' + id) Ver Ficha
                                     else
-                                        button.btn.btn-secondary.btn-block(disabled) Agotado
+                                        button.btn.btn-secondary.btn-sm.btn-block(disabled) Sin Info
         else
             .alert.alert-warning.text-center.mt-5 No hay ofertas disponibles en este momento.
+
+    //- PEQUEÑO FIX CSS PARA QUE EL 20% SOLO APLIQUE EN PANTALLAS GRANDES
+    style.
+        @media (max-width: 992px) {
+            .col-lg-custom-5 {
+                flex: 0 0 33.333% !important; /* En tablets vuelve a 3 columnas */
+                max-width: 33.333% !important;
+            }
+        }
+        @media (max-width: 768px) {
+            .col-lg-custom-5 {
+                flex: 0 0 100% !important; /* En móviles ocupa todo */
+                max-width: 100% !important;
+            }
+        }

@@ -1,0 +1,159 @@
+/* --- AJUSTE GLOBAL DE TAMAÑO --- */
+html {
+    /* El tamaño por defecto es 16px (100%).
+       Bajándolo un poco, todo se hace más fino y elegante. */
+    font-size: 14px; /* Prueba con 14px o 0.9rem */
+}
+
+@media (min-width: 1400px) {
+    /* En pantallas muy grandes (Full HD+), podemos dejarlo un pelín más grande */
+    html {
+        font-size: 15px;
+    }
+}
+
+/* Opcional: Si los títulos siguen pareciendo enormes */
+h1 { font-size: 2.5rem !important; }
+h2 { font-size: 2rem !important; }
+h3 { font-size: 1.75rem !important; }
+
+/* --- HEADER CONTENEDOR --- */
+header.header {
+    background-color: #7A1E39;
+    padding: 1rem 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* --- 1. MENÚ DE NAVEGACIÓN (Centro) --- */
+.navigation-menu {
+    display: flex;
+    gap: 40px; /* <--- ESTO SEPARA "Reseñas Ofertas Contacto" */
+    align-items: center;
+}
+
+.navigation-menu .nav-link {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+    padding: 0;
+    font-weight: 500;
+    position: relative;
+    text-decoration: none;
+}
+
+.navigation-menu .nav-link:hover {
+    color: #FFC107;
+}
+
+/* --- 2. PANEL DE ACCIONES (Derecha) --- */
+.actions-panel {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 30px; /* <--- ESTO SEPARA EL BUSCADOR DE LOS BOTONES */
+}
+
+/* Estilos del Buscador */
+.search-form {
+    max-width: 250px;
+    width: 100%;
+}
+
+.search-input {
+    background-color: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    border-radius: 20px 0 0 20px !important;
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.search-input:focus {
+    background-color: rgba(255, 255, 255, 0.25);
+    color: white;
+    box-shadow: none;
+}
+
+.btn-search {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    border-radius: 0 20px 20px 0 !important;
+}
+
+.btn-search:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+/* --- 3. BOTONES DE LOGIN / CREAR --- */
+.auth-block {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* <--- ESTO SEPARA LOGIN DE CREAR CUENTA */
+}
+
+.btn-login {
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.5);
+    padding: 6px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: 0.3s;
+    white-space: nowrap;
+}
+
+.btn-login:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+    border-color: white;
+}
+
+.btn-crear {
+    background-color: #FFC107;
+    color: #7A1E39;
+    font-weight: 700;
+    padding: 7px 18px;
+    border-radius: 6px;
+    border: none;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: 0.3s;
+}
+
+.btn-crear:hover {
+    background-color: #ffca2c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.user-name {
+    color: white;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+/* --- FOOTER --- */
+.footer {
+    background-color: #7A1E39; /* Tu color burdeos */
+    color: #f5f5f5;
+    padding: 3rem 0;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.footer a.nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s;
+}
+
+.footer a.nav-link:hover {
+    color: #FFC107;
+}
+
+.copyright {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}

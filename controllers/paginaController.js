@@ -95,26 +95,32 @@ const guardarResenias = async (req, res) => {
 }
 
 const paginaOfertas = async (req, res) => {
-    // CAMBIO CLAVE: filter=free-ebooks
-    let url = `https://www.googleapis.com/books/v1/volumes?q=Clasicos&filter=free-ebooks&langRestrict=es&maxResults=20&country=ES&key=${process.env.GOOGLE_BOOKS_API_KEY}`;
+
+    // CAMBIO RADICAL:
+    // 1. Quitamos 'filter=free-ebooks' (Adiós libros viejos/feos).
+    // 2. Buscamos 'subject:fiction' ordenado por 'relevance' (Los más famosos primero).
+    // 3. printType=books para que no salgan revistas.
+
+    const url = `https://www.googleapis.com/books/v1/volumes?q=subject:fiction&orderBy=relevance&langRestrict=es&printType=books&maxResults=20&key=${process.env.GOOGLE_BOOKS_API_KEY}`;
+
     try {
         const respuesta = await fetch(url);
         const data = await respuesta.json();
         const libros = data.items || [];
 
         res.render('ofertas', {
-            pagina: 'Super Ofertas',
+            pagina: 'Mejores Ofertas',
             libros: libros
         });
+
     } catch (error) {
         console.log(error);
         res.render('ofertas', {
-            pagina: 'Super Ofertas',
+            pagina: 'Mejores Ofertas',
             libros: []
         });
     }
 }
-
 export {paginaInicio,
     paginaResenias,
     guardarResenias,
