@@ -1,5 +1,3 @@
-import dotenv from 'dotenv';
-
 import nodemailer from "nodemailer";
 
 const enviarCorreo = async (req, res) => {
