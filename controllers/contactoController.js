@@ -11,7 +11,9 @@ const enviarCorreo = async (req, res) => {
     }
 
     const transport = nodemailer.createTransport({
-        service: 'gmail',
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
         auth: {
             user: process.env.user,
             pass: process.env.contrasenia_correo
