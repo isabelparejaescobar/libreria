@@ -18,7 +18,7 @@ const formularioRegistro = (req, res) => {
 const registrar = async (req, res) => {
     const { nombre, email, password } = req.body;
 
-    // Validar que no haya campos vacíos
+    // comprobamos que no haya campos vacíos
     if(Object.values(req.body).includes('')) {
         return res.render('auth/registro', {
             pagina: 'Crear Cuenta',
@@ -27,7 +27,7 @@ const registrar = async (req, res) => {
         });
     }
 
-    // Validar que el usuario no exista ya
+    // comprobamos que el usuario no exista ya
     const existeUsuario = await Usuario.findOne({ where : { email : email } });
     if(existeUsuario) {
         return res.render('auth/registro', {
@@ -97,5 +97,5 @@ export {
     formularioRegistro,
     registrar,
     autenticar,
-    cerrarSesion // <--- No olvides exportarla
+    cerrarSesion
 }

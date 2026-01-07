@@ -1,25 +1,28 @@
+//jwt sirve para que cuando alguien se loguee generes un token con un id encriptado
+//le permite entrar a la pagina sin tener que volver a poner la contraseña si se ha logueado
 import jwt from 'jsonwebtoken';
 import { Usuario } from '../models/Usuario.js';
 
 const identificarUsuario = async (req, res, next) => {
-    // 1. Mirar si hay token en las cookies
+    //miro si hay token en las cookies
     const { _token } = req.cookies;
 
+    //si no estas logueado
     if(!_token) {
         req.usuario = null;
-        return next(); // Si no hay token, seguimos sin usuario
+        return next();
     }
 
     try {
-        // 2. Comprobar que el token es válido
+        //Comprobar que el token es válido
         const decoded = jwt.verify(_token, 'palabrasecreta');
 
-        // 3. Buscar el usuario y pasarlo a la vista (res.locals)
+        //buscar el usuario y pasarlo a la vista
         const usuario = await Usuario.scope('eliminarPassword').findByPk(decoded.id);
 
         if(usuario) {
             req.usuario = usuario;
-            res.locals.usuarioLogueado = usuario; // <--- ESTA ES LA CLAVE PARA PUG
+            res.locals.usuarioLogueado = usuario;
         }
         return next();
     } catch (error) {

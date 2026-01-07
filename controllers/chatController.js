@@ -1,14 +1,18 @@
+//instalamos la libreria de groq
 import Groq from "groq-sdk";
 
 const obtenerRespuestaChat = async (req, res) => {
     const { mensaje } = req.body;
 
     try {
+        //ponemos la clave de la api que hemos generado que esta oculta en el env
         const groq = new Groq({ apiKey: process.env.GROK_API });
 
         const chatCompletion = await groq.chat.completions.create({
             messages: [
                 {
+                    //consiguramos el bot
+                    //le damos todo el contesto o contenido del que debe hablar
                     role: "system",
                     content: `Eres un bibliotecario experto, culto y MUY PRECISO con los géneros literarios.
                     
@@ -35,12 +39,14 @@ const obtenerRespuestaChat = async (req, res) => {
                 },
                 { role: "user", content: mensaje }
             ],
+            //el modelo que estoy usando en este caso
+            //controlamos la temperatura para que sea precisa y no se invente cosas
             model: "llama-3.3-70b-versatile",
             temperature: 0.2,
             response_format: { type: "json_object" }
         });
 
-        // Limpieza y respuesta (Igual que antes)
+        // limpieza y respuesta
         let content = chatCompletion.choices[0].message.content;
         const limpiarJSON = (str) => str.replace(/```json/g, '').replace(/```/g, '').trim();
         const respuestaIA = JSON.parse(limpiarJSON(content));
@@ -51,6 +57,7 @@ const obtenerRespuestaChat = async (req, res) => {
 
         let htmlRespuesta = `<p class="mb-2">${respuestaIA.texto}</p>`;
 
+        //le damos estilo a la respuesta
         if (respuestaIA.libros && respuestaIA.libros.length > 0) {
             respuestaIA.libros.forEach(libro => {
                 const imgGenerica = 'https://cdn-icons-png.flaticon.com/512/3330/3330314.png';
@@ -69,7 +76,7 @@ const obtenerRespuestaChat = async (req, res) => {
         res.json({ reply: htmlRespuesta });
 
     } catch (error) {
-        console.error("🔴 Error Chat:", error);
+        console.error("Error Chat:", error);
         res.json({ reply: "Estoy afinando mi brújula literaria. Inténtalo de nuevo." });
     }
 }

@@ -2,7 +2,7 @@ extends ./layout/index
 
 block contenido
     //- ============================================
-    //- 1. EL CARRUSEL (INTACTO)
+    //- CARRUSEL DE IMAGENES
     //- ============================================
     if pagina === 'Inicio'
         #carouselInicio.carousel.slide(data-ride="carousel" data-interval="3000")
@@ -34,7 +34,7 @@ block contenido
                 span.carousel-control-next-icon
 
     //- ============================================
-    //- 2. RESULTADOS (SOLUCIÓN DEFINITIVA IMÁGENES)
+    //- LIBROS ALEATORIOS RECOMENDADOS
     //- ============================================
     .container-fluid.my-5.px-5
         h2.text-center.mb-5.font-weight-bold(style="font-family: 'Playfair Display', serif;") #{pagina === 'Inicio' ? 'Recomendaciones' : pagina}

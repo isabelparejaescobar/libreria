@@ -1,31 +1,33 @@
 // controllers/bookController.js
 
+//descargamos axios para hacer peticiones http
 import axios from 'axios';
 
+//credenciales de mi api
 const API_KEY = process.env.GOOGLE_BOOKS_API_KEY;
+//direccion a la que mi aplicacion tiene que dirigirse
 const API_URL = 'https://www.googleapis.com/books/v1/volumes';
 
 export async function searchBooks(searchTerm) {
 
+    //si no buscar nada
     if (!searchTerm) {
         return [];
     }
 
+    //esto sirve para terminar de construir la url
     const params = {
         q: searchTerm,
-        maxResults: 20,
+        maxResults: 20, //maximo 20 libros
         key: API_KEY
     };
 
+    //para debuguear
     try {
         console.log(`[LOG] Búsqueda iniciada para: ${searchTerm}`);
 
         const response = await axios.get(API_URL, { params });
         const data = response.data;
-
-        // =========================================================
-        // === ZONA CRÍTICA DE DEBUGGING === (Funciona, mantengo los logs)
-        // =========================================================
 
         if (data.items) {
             console.log(`[LOG] API Status: OK. Items encontrados: ${data.items.length}`);
@@ -38,6 +40,7 @@ export async function searchBooks(searchTerm) {
 
         // =========================================================
 
+        //cogemos los datos que necesitemos mapeando
         if (data.items && data.items.length > 0) {
 
             const books = data.items.map(item => ({
@@ -53,7 +56,6 @@ export async function searchBooks(searchTerm) {
                     ? `${item.saleInfo.listPrice.amount} ${item.saleInfo.listPrice.currencyCode}`
                     : 'No disponible / Gratis',
                 linkCompra: item.saleInfo ? item.saleInfo.buyLink : null,
-                // Puedes añadir más campos si los necesitas
             }));
 
             return books; // Aquí se resuelve el error: 'books' está definido y se devuelve.
@@ -73,10 +75,8 @@ export async function searchBooks(searchTerm) {
 }
 
 
-/**
- * Obtiene los detalles de un libro específico por su ID
- * @param {string} id - El ID del volumen de Google Books
- */
+
+//esto da detalles de un libro en concreto
 export async function getBookDetails(id) {
     const url = `${API_URL}/${id}`;
 
@@ -92,16 +92,13 @@ export async function getBookDetails(id) {
         const info = item.volumeInfo;
         const sale = item.saleInfo;
 
-        // --- LÓGICA DE PRECIO CORREGIDA ---
+        //en caso de que no haya o sea gratis
         let precioFinal = 'No disponible / Gratis';
 
         if (sale && sale.saleability === 'FOR_SALE') {
-            // AQUÍ ESTÁ EL CAMBIO:
-            // Prioridad 1: retailPrice (El precio real al que te lo venden, la oferta)
             if (sale.retailPrice) {
                 precioFinal = `${sale.retailPrice.amount} ${sale.retailPrice.currencyCode}`;
             }
-            // Prioridad 2: listPrice (Solo si no hay precio de oferta, usamos el de lista)
             else if (sale.listPrice) {
                 precioFinal = `${sale.listPrice.amount} ${sale.listPrice.currencyCode}`;
             }
@@ -109,6 +106,7 @@ export async function getBookDetails(id) {
             precioFinal = '0.00 EUR';
         }
 
+        //detalles de ese libro concreto que usamos en la vista
         const bookDetail = {
             id: item.id,
             titulo: info.title,
