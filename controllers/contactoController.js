@@ -3,35 +3,45 @@ import nodemailer from "nodemailer";
 const enviarCorreo = async (req, res) => {
     const { nombre, apellidos, email, telefono, mensaje } = req.body;
 
+    // Validacion
     if (!nombre || !apellidos || !email || !telefono || !mensaje) {
-        return res.redirect('/contacto');
+        res.redirect('/contacto');
+        return;
     }
 
     const transport = nodemailer.createTransport({
         service: 'gmail',
+        host: "sandbox.smtp.mailtrap.io",
+        port: 2525,
         auth: {
-            user: process.env.USER_EMAIL,      // ejemplo: isabelparejaescobar@gmail.com
-            pass: process.env.GMAIL_APP_PASS   // contraseña de aplicación
+            user: process.env.user,
+            pass: process.env.contrasenia_correo,
         }
     });
 
     try {
         await transport.sendMail({
-            from: `"Librería Node" <${process.env.USER_EMAIL}>`,
+            from: 'isabelparejaescobar@gmail.com',
             to: email,
             subject: 'Hemos recibido tu mensaje correctamente',
             html: `
-                <h1>¡Hola ${nombre}!</h1>
-                <p>Hemos recibido tu mensaje.</p>
+                <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee;">
+                    <h1 style="color: #007bff;">¡Hola ${nombre}!</h1>
+                    <p>Gracias por contactar con <strong>Librería Node</strong>.</p>
+                    <p>Hemos recibido tu consulta y nos pondremos en contacto contigo en breve.</p>
+                    <hr>
+                    <p><small>Este es un correo automático, por favor no respondas a esta dirección.</small></p>
+                </div>
             `
         });
 
         res.redirect('/contacto');
+
     } catch (error) {
-        console.error(error);
+        console.log(error);
         res.redirect('/contacto');
     }
-};
+}
 
 export {
     enviarCorreo
