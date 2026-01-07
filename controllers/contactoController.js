@@ -12,11 +12,9 @@ const enviarCorreo = async (req, res) => {
 
     const transport = nodemailer.createTransport({
         service: 'gmail',
-        host: "sandbox.smtp.mailtrap.io",
-        port: 2525,
         auth: {
             user: process.env.user,
-            pass: process.env.contrasenia_correo,
+            pass: process.env.contrasenia_correo
         }
     });
 
