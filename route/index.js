@@ -57,7 +57,7 @@ router.get('/buscar', async (req, res) => {
     const searchTerm = req.query.q;
 
     try {
-        if (!searchTerm) {
+        if (!searchTerm) {  
             return res.redirect('/');
         }
 
