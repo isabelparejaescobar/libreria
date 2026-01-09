@@ -96,11 +96,6 @@ const guardarResenias = async (req, res) => {
 
 const paginaOfertas = async (req, res) => {
 
-    // CAMBIO RADICAL:
-    // 1. Quitamos 'filter=free-ebooks' (Adiós libros viejos/feos).
-    // 2. Buscamos 'subject:fiction' ordenado por 'relevance' (Los más famosos primero).
-    // 3. printType=books para que no salgan revistas.
-
     //ofertas en genero de ficcion
     const url = `https://www.googleapis.com/books/v1/volumes?q=subject:fiction&orderBy=relevance&langRestrict=es&printType=books&maxResults=20&key=${process.env.GOOGLE_BOOKS_API_KEY}`;
 

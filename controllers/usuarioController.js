@@ -87,7 +87,6 @@ const autenticar = async (req, res) => {
 }
 
 // --- 4. CERRAR SESIÓN (LOGOUT) ---
-// Esta función también faltaba y es necesaria para el botón "Cerrar Sesión"
 const cerrarSesion = (req, res) => {
     res.clearCookie('_token').redirect('/auth/login');
 }

@@ -108,7 +108,7 @@ router.get('/libro/:id', async (req, res) => {
             _id: datosGoogle.id
         };
 
-        // Renderizamos la vista 'detalle' (Asegúrate de que tu archivo pug se llame detalle.pug)
+        // Renderizamos la vista 'detalle
         res.render('detalles', {
             pagina: libro.titulo,
             libro: libro
