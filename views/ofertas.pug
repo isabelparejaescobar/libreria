@@ -38,18 +38,15 @@ block contenido
                     - var precioTachado = ''
 
                     if disponible
-                        // El precio REAL viene de Google
+                        // El precio REAL
                         - var precioNum = sale.retailPrice.amount
                         - precioReal = precioNum.toFixed(2) + ' €'
 
-                        // El precio TACHADO sí lo calculamos (falso marketing +30%)
+                        // El precio TACHADO sí lo calculamos
                         - precioTachado = (precioNum * 1.30).toFixed(2) + ' €'
 
 
-                    //- --- COLUMNA PERSONALIZADA PARA 5 ITEMS ---
-                    //- En PC (lg) forzamos ancho 20% para que quepan 5
-                    //- En móvil (col-12) ocupa todo
-                    //- En tablet (col-md-4) ocupan 1/3
+
                     .col-12.col-md-4.mb-4(style="flex: 0 0 20%; max-width: 20%;" class="col-lg-custom-5")
                         .card.h-100.shadow-sm.border-0
                             //- CABECERA IMAGEN
@@ -75,7 +72,7 @@ block contenido
                                             span.text-muted.small(style="text-decoration: line-through; font-size: 0.8rem;") PVP: #{precioTachado}
                                             span.h5.font-weight-bold.text-danger.mb-0 #{precioReal}
                                         else
-                                            //- SI GOOGLE NO DA PRECIO, NO SE INVENTA
+                                            //- SI GOOGLE NO DA PRECIO
                                             span.text-muted.small &nbsp;
                                             span.h6.font-weight-bold.text-muted.mb-0 No disponible
 
@@ -88,18 +85,3 @@ block contenido
                                         button.btn.btn-secondary.btn-sm.btn-block(disabled) Sin Info
         else
             .alert.alert-warning.text-center.mt-5 No hay ofertas disponibles en este momento.
-
-    //- PEQUEÑO FIX CSS PARA QUE EL 20% SOLO APLIQUE EN PANTALLAS GRANDES
-    style.
-        @media (max-width: 992px) {
-            .col-lg-custom-5 {
-                flex: 0 0 33.333% !important; /* En tablets vuelve a 3 columnas */
-                max-width: 33.333% !important;
-            }
-        }
-        @media (max-width: 768px) {
-            .col-lg-custom-5 {
-                flex: 0 0 100% !important; /* En móviles ocupa todo */
-                max-width: 100% !important;
-            }
-        }

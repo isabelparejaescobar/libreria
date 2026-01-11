@@ -14,7 +14,7 @@ header.header
                         a.nav-link(href="/ofertas") Ofertas
                         a.nav-link(href="/contacto") Contacto
 
-                // 3. BUSCADOR Y BOTONES (Derecha)
+                // 3. BUSCADOR Y BOTONES
                 .col-md-5.col-12
                     .actions-panel
                         // Bloque del Buscador
@@ -24,7 +24,7 @@ header.header
                                 button.btn.btn-search(type="submit")
                                     i.bi.bi-search
 
-                        // Bloque de Autenticación (Separado del buscador)
+                        // Bloque de Autenticación
                         .auth-block
                             if usuarioLogueado
                                 span.user-name Hola, #{usuarioLogueado.nombre}

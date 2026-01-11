@@ -1,6 +1,6 @@
 import express from "express";
 import axios from "axios";
-import { searchBooks } from '../controllers/bookController.js';
+import { searchBooks , getBookDetails } from '../controllers/bookController.js';
 import {guardarResenias, paginaInicio, paginaResenias, paginaOfertas} from "../controllers/paginaController.js";
 import { enviarCorreo } from '../controllers/contactoController.js';
 const router = express.Router();
@@ -85,37 +85,15 @@ router.get('/libro/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
-        // Hacemos la petición DIRECTAMENTE aquí usando Axios
-        const respuesta = await axios.get(`https://www.googleapis.com/books/v1/volumes/${id}`);
-        const datosGoogle = respuesta.data;
+        const libro = await getBookDetails(id);
 
-        // Limpiamos los datos para que tu PUG los entienda
-        const libro = {
-            titulo: datosGoogle.volumeInfo.title,
-            subtitulo: datosGoogle.volumeInfo.subtitle,
-            autores: datosGoogle.volumeInfo.authors ? datosGoogle.volumeInfo.authors.join(', ') : 'Desconocido',
-            descripcion: datosGoogle.volumeInfo.description || 'Sin descripción disponible.',
-            imagen: datosGoogle.volumeInfo.imageLinks ? (datosGoogle.volumeInfo.imageLinks.large || datosGoogle.volumeInfo.imageLinks.thumbnail) : null,
-            editorial: datosGoogle.volumeInfo.publisher,
-            fechaPublicacion: datosGoogle.volumeInfo.publishedDate,
-            paginas: datosGoogle.volumeInfo.pageCount,
-            categorias: datosGoogle.volumeInfo.categories ? datosGoogle.volumeInfo.categories.join(', ') : 'General',
-            isbn: datosGoogle.volumeInfo.industryIdentifiers ? datosGoogle.volumeInfo.industryIdentifiers[0].identifier : 'No disponible',
-            idioma: datosGoogle.volumeInfo.language,
-            precio: datosGoogle.saleInfo.listPrice ? `${datosGoogle.saleInfo.listPrice.amount} ${datosGoogle.saleInfo.listPrice.currencyCode}` : 'No disponible / Gratis',
-            linkCompra: datosGoogle.saleInfo.buyLink,
-            _id: datosGoogle.id
-        };
-
-        // Renderizamos la vista 'detalle
         res.render('detalles', {
             pagina: libro.titulo,
-            libro: libro
+            libro
         });
 
     } catch (error) {
-        console.error("Error al obtener detalles:", error.message);
-        // Si el ID no es válido o Google falla, redirigimos al inicio
+        console.error(error.message);
         res.redirect('/');
     }
 });

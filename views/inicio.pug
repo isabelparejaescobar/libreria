@@ -67,13 +67,12 @@ block contenido
                         - precio = libroItem.precio
 
                     //- --- LÓGICA DE IMAGEN ---
-                    - var imagen = null // Empezamos sin imagen
+                    - var imagen = null
                     if info.imageLinks && info.imageLinks.thumbnail
                         - imagen = info.imageLinks.thumbnail
                     else if libroItem.imagen
                         - imagen = libroItem.imagen
 
-                    //- TRUCO 1: Forzamos HTTPS reemplazando http: por https: en la cadena de texto
                     if imagen && imagen.startsWith('http:')
                         - imagen = imagen.replace('http:', 'https:')
 
@@ -87,7 +86,6 @@ block contenido
                                 if !imagen
                                     span.small Sin Portada
                                 else
-                                    //- TRUCO 2: Si falla (onerror), ocultamos la imagen (display='none').
                                     //- Al ocultarse, se verá el fondo gris del div padre. Adios icono roto.
                                     img(
                                         src=imagen
@@ -115,11 +113,3 @@ block contenido
         else
             .alert.alert-warning.text-center.mt-5 No se encontraron libros.
 
-    //- CSS
-    style.
-        @media (min-width: 992px) {
-            .col-5-custom {
-                flex: 0 0 20%;
-                max-width: 20%;
-            }
-        }
