@@ -57,7 +57,7 @@ router.get('/buscar', async (req, res) => {
     const searchTerm = req.query.q;
 
     try {
-        if (!searchTerm) {  
+        if (!searchTerm) {
             return res.redirect('/');
         }
 
@@ -86,7 +86,6 @@ router.get('/libro/:id', async (req, res) => {
 
     try {
         // Hacemos la petición DIRECTAMENTE aquí usando Axios
-        // (Reemplazamos la función getBookDetails que no existía)
         const respuesta = await axios.get(`https://www.googleapis.com/books/v1/volumes/${id}`);
         const datosGoogle = respuesta.data;
 
